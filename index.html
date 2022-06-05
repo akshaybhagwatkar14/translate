@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRANSLATE APP II</title>
+    <style>
+       
+        #container{
+            display: flex;
+            border: 3px solid whitesmoke;
+           
+        }
+        #input , #output{
+             flex: 1;
+             margin: 6%;
+             height: 250px;
+             box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        }
+        #input-text{
+            width: 99%;
+            height: 220px;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+            text-align: center;
+        }
+        h1{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+        <h1>Translator App</h1>
+      
+      <div id="container">
+
+          <div id="input" oninput="debouncing(Translate,1100)">
+
+              <select name="inp_lang" id="inp_lang">
+                  <option value="en">English</option>
+                  <option value="hi">Hindi</option>
+                </select>
+
+            <textarea name="input-text" id="input-text" ></textarea>
+
+          </div>  
+
+        <div id="output">
+
+            <select name="out_lang" id="out_lang">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            </select>
+
+         <p id="appendData"></p>
+
+        </div>
+      </div>
+</body>
+</html>
+
+<script>
+
+    let id;
+
+    function read(id)
+    {
+        return document.getElementById(id).value;
+    }
+    async function Translate()
+    {
+      try
+      {
+        const input=read("input-text");
+        const input_lang=read("inp_lang");
+        const output_lang=read("out_lang");
+
+        const res=await fetch('https://libretranslate.de/translate',
+        {
+            method:'POST',
+
+            body:JSON.stringify({
+                q:input,
+                source:input_lang,
+                target:output_lang,
+                format:"text",
+            }),
+
+             headers:
+            {
+                "Content-Type":'application/json',
+
+            },
+        });
+
+        const data=await res.json();
+
+        document.getElementById("appendData").innerText=data.translatedText;
+
+        console.log("data : ",data);
+    } 
+    catch(err)
+    {
+        console.log("err : ",err);
+    }
+}
+
+function debouncing(func,delay)
+{
+        if(id)
+        {
+            clearTimeout(id);
+        }
+        id=setTimeout(function()
+        {
+          func();
+        },delay);
+    }
+</script>
